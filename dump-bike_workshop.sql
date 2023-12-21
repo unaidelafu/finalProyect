@@ -114,7 +114,7 @@ CREATE TABLE `customers` (
 
 LOCK TABLES `customers` WRITE;
 /*!40000 ALTER TABLE `customers` DISABLE KEYS */;
-INSERT INTO `customers` VALUES (1,'B41275986','Rodrigo','Saiz','rodrigo.saiz@gmail.com','651857306','Bilbao','ACTIVE'),(2,'Z85747120','Ciclos','Garate','ciclos.garate@gmail.com','638367591','Bilbao','ACTIVE'),(3,'D85741025','Sofia','Torres','sofia.torres@gmail.com','635266042','Bilbao','ACTIVE'),(5,'P47105966','Guillermoa','Tolosa','guillermo.tolosa@gmail.com','695339075','Donostia','ACTIVE'),(6,'Z87412558','Nerea','Saiz','nerea.saiz@gmail.com','697013058','Donostia','ACTIVE'),(26,'P71872049','Elvira','Granja','elvira.granja@gmail.com','699048070','Santander','ACTIVE'),(31,'88244850P','Diego','Matusalen','diego.matusalen@gmail.com','624861692','Vitoria','ACTIVE'),(46,'587498550','Diego','Gimienez','diego.gimenez@gmail.com','257484855','Santander','ACTIVE'),(47,'8547112259R','Teresa','Benito','teresabenito@gmail.com','748547778','Bilbao','ACTIVE'),(48,'7415487999P','Carlos','Perico','carlos.perico@gmail.com','5487774512','Huelva','ACTIVE');
+INSERT INTO `customers` VALUES (1,'B41275986','Rodrigo','Saiz','rodrigo.saiz@gmail.com','651857306','Bilbao','ACTIVE'),(2,'Z85747120','Ciclos','Garate','ciclos.garate@gmail.com','638367591','Bilbao','ACTIVE'),(3,'D85741025','Sofia','Torres','sofia.torres@gmail.com','635266042','Bilbao','ACTIVE'),(5,'P47105966','Guillermoa','Tolosa','guillermo.tolosa@gmail.com','695339075','Donostia','ACTIVE'),(6,'Z87412558','Nerea','Saiz','nerea.saiz@gmail.com','697013058','Donostia','ACTIVE'),(26,'P71872049','Elvira','Granja','elvira.granja@gmail.com','699048070','Santander','ACTIVE'),(31,'88244850P','Diego','Matusalen','diego.matusalen@gmail.com','624861692','Vitoria','ACTIVE'),(46,'587498550','Diego','Gimienez','diego.gimenez@gmail.com','657484855','Santander','ACTIVE'),(47,'8547112259R','Teresa','Benito','teresabenito@gmail.com','648547778','Bilbao','ACTIVE'),(48,'7415487999P','Carlos','Perico','carlos.perico@gmail.com','648777451','Huelva','ACTIVE');
 /*!40000 ALTER TABLE `customers` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -426,4 +426,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-12-21 19:50:45
+-- Dump completed on 2023-12-21 20:15:46
