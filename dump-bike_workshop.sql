@@ -25,7 +25,8 @@ DROP TABLE IF EXISTS `bike_types`;
 CREATE TABLE `bike_types` (
   `bt_id` int(11) NOT NULL AUTO_INCREMENT,
   `bt_name` varchar(100) NOT NULL,
-  PRIMARY KEY (`bt_id`)
+  PRIMARY KEY (`bt_id`),
+  UNIQUE KEY `bike_types_un` (`bt_name`)
 ) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -35,7 +36,7 @@ CREATE TABLE `bike_types` (
 
 LOCK TABLES `bike_types` WRITE;
 /*!40000 ALTER TABLE `bike_types` DISABLE KEYS */;
-INSERT INTO `bike_types` VALUES (1,'Mountain bike'),(2,'Road bike'),(3,'Electric bike'),(4,'BMX bike'),(5,'Folding bike'),(6,'Cruiser bike'),(7,'Gravel bike'),(8,'Kids bike'),(9,'Tandem bike'),(10,'Fixie bike'),(11,'Downhill bike');
+INSERT INTO `bike_types` VALUES (4,'BMX bike'),(6,'Cruiser bike'),(11,'Downhill bike'),(3,'Electric bike'),(10,'Fixie bike'),(5,'Folding bike'),(7,'Gravel bike'),(8,'Kids bike'),(1,'Mountain bike'),(2,'Road bike'),(9,'Tandem bike');
 /*!40000 ALTER TABLE `bike_types` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -141,7 +142,7 @@ CREATE TABLE `customers_bikes` (
   CONSTRAINT `customers_bikes_FK` FOREIGN KEY (`cb_b_id`) REFERENCES `brands` (`b_id`),
   CONSTRAINT `customers_bikes_FK_1` FOREIGN KEY (`cb_c_id`) REFERENCES `customers` (`c_id`),
   CONSTRAINT `customers_bikes_FK_2` FOREIGN KEY (`cb_bt_id`) REFERENCES `bike_types` (`bt_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -150,7 +151,7 @@ CREATE TABLE `customers_bikes` (
 
 LOCK TABLES `customers_bikes` WRITE;
 /*!40000 ALTER TABLE `customers_bikes` DISABLE KEYS */;
-INSERT INTO `customers_bikes` VALUES (1,'100000000001','bh road bike red',20,2,1,'ACTIVE'),(2,'100000000002','Fox downhill bike pink',7,11,2,'ACTIVE');
+INSERT INTO `customers_bikes` VALUES (1,'100000000001','bh road bike red',20,2,1,'ACTIVE'),(2,'100000000002','Fox downhill bike pink',7,11,2,'ACTIVE'),(3,'100000000003','Fox downhill bike blue',7,11,1,'ACTIVE');
 /*!40000 ALTER TABLE `customers_bikes` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -215,6 +216,173 @@ INSERT INTO `employees_types` VALUES (1,'Admin','1'),(2,'Receptionist','0'),(3,'
 UNLOCK TABLES;
 
 --
+-- Table structure for table `historic_header`
+--
+
+DROP TABLE IF EXISTS `historic_header`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `historic_header` (
+  `hh_id` int(11) NOT NULL AUTO_INCREMENT,
+  `hh_ih_id` int(11) NOT NULL,
+  `hh_c_id` int(11) NOT NULL,
+  `hh_e_id` int(11) NOT NULL,
+  `hh_note_id` int(11) DEFAULT NULL,
+  `hh_date_in` datetime NOT NULL DEFAULT current_timestamp(),
+  `hh_date_out` datetime DEFAULT NULL,
+  `hh_price` float DEFAULT NULL,
+  `hh_status_id` int(11) NOT NULL,
+  PRIMARY KEY (`hh_id`),
+  KEY `incoming_header_FK` (`hh_c_id`) USING BTREE,
+  KEY `incoming_header_FK_1` (`hh_e_id`) USING BTREE,
+  KEY `incoming_header_FK_2` (`hh_note_id`) USING BTREE,
+  KEY `incoming_header_FK_3` (`hh_status_id`) USING BTREE,
+  CONSTRAINT `incoming_header_FK_1_copy` FOREIGN KEY (`hh_e_id`) REFERENCES `employees` (`e_id`),
+  CONSTRAINT `incoming_header_FK_2_copy` FOREIGN KEY (`hh_note_id`) REFERENCES `notes` (`n_id`),
+  CONSTRAINT `incoming_header_FK_3_copy` FOREIGN KEY (`hh_status_id`) REFERENCES `status` (`st_id`),
+  CONSTRAINT `incoming_header_FK_copy` FOREIGN KEY (`hh_c_id`) REFERENCES `customers` (`c_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `historic_header`
+--
+
+LOCK TABLES `historic_header` WRITE;
+/*!40000 ALTER TABLE `historic_header` DISABLE KEYS */;
+/*!40000 ALTER TABLE `historic_header` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `historic_line`
+--
+
+DROP TABLE IF EXISTS `historic_line`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `historic_line` (
+  `hl_id` int(11) NOT NULL AUTO_INCREMENT,
+  `hl_il_id` int(11) NOT NULL,
+  `hl_ih_id` int(11) NOT NULL,
+  `hl_bike_id` int(11) NOT NULL,
+  `hl_work_id` int(11) NOT NULL,
+  `hl_product_id` int(11) NOT NULL,
+  `hl_employee_id` int(11) DEFAULT NULL,
+  `hl_time` int(11) DEFAULT NULL,
+  `hl_notes_id` int(11) DEFAULT NULL,
+  `hl_status_id` int(11) NOT NULL,
+  PRIMARY KEY (`hl_id`),
+  KEY `incoming_line_FK` (`hl_ih_id`) USING BTREE,
+  KEY `incoming_line_FK_1` (`hl_employee_id`) USING BTREE,
+  KEY `incoming_line_FK_2` (`hl_product_id`) USING BTREE,
+  KEY `incoming_line_FK_3` (`hl_bike_id`) USING BTREE,
+  KEY `incoming_line_FK_4` (`hl_work_id`) USING BTREE,
+  KEY `incoming_line_FK_5` (`hl_notes_id`) USING BTREE,
+  KEY `incoming_line_FK_6` (`hl_status_id`) USING BTREE,
+  CONSTRAINT `incoming_line_FK_1_copy` FOREIGN KEY (`hl_employee_id`) REFERENCES `employees` (`e_id`),
+  CONSTRAINT `incoming_line_FK_2_copy` FOREIGN KEY (`hl_product_id`) REFERENCES `product` (`p_id`),
+  CONSTRAINT `incoming_line_FK_3_copy` FOREIGN KEY (`hl_bike_id`) REFERENCES `customers_bikes` (`cb_id`),
+  CONSTRAINT `incoming_line_FK_4_copy` FOREIGN KEY (`hl_work_id`) REFERENCES `work_tasks` (`wt_id`),
+  CONSTRAINT `incoming_line_FK_5_copy` FOREIGN KEY (`hl_notes_id`) REFERENCES `notes` (`n_id`),
+  CONSTRAINT `incoming_line_FK_6_copy` FOREIGN KEY (`hl_status_id`) REFERENCES `status` (`st_id`),
+  CONSTRAINT `incoming_line_FK_copy` FOREIGN KEY (`hl_ih_id`) REFERENCES `incoming_header` (`ih_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `historic_line`
+--
+
+LOCK TABLES `historic_line` WRITE;
+/*!40000 ALTER TABLE `historic_line` DISABLE KEYS */;
+/*!40000 ALTER TABLE `historic_line` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `incoming_header`
+--
+
+DROP TABLE IF EXISTS `incoming_header`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `incoming_header` (
+  `ih_id` int(11) NOT NULL AUTO_INCREMENT,
+  `ih_c_id` int(11) NOT NULL,
+  `ih_e_id` int(11) NOT NULL,
+  `ih_note_id` int(11) DEFAULT NULL,
+  `ih_date_in` datetime NOT NULL DEFAULT current_timestamp(),
+  `ih_date_out` datetime DEFAULT NULL,
+  `ih_price` float DEFAULT NULL,
+  `ih_status_id` int(11) NOT NULL,
+  PRIMARY KEY (`ih_id`),
+  KEY `incoming_header_FK` (`ih_c_id`),
+  KEY `incoming_header_FK_1` (`ih_e_id`),
+  KEY `incoming_header_FK_2` (`ih_note_id`),
+  KEY `incoming_header_FK_3` (`ih_status_id`),
+  CONSTRAINT `incoming_header_FK` FOREIGN KEY (`ih_c_id`) REFERENCES `customers` (`c_id`),
+  CONSTRAINT `incoming_header_FK_1` FOREIGN KEY (`ih_e_id`) REFERENCES `employees` (`e_id`),
+  CONSTRAINT `incoming_header_FK_2` FOREIGN KEY (`ih_note_id`) REFERENCES `notes` (`n_id`),
+  CONSTRAINT `incoming_header_FK_3` FOREIGN KEY (`ih_status_id`) REFERENCES `status` (`st_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `incoming_header`
+--
+
+LOCK TABLES `incoming_header` WRITE;
+/*!40000 ALTER TABLE `incoming_header` DISABLE KEYS */;
+INSERT INTO `incoming_header` VALUES (1,1,2,NULL,'2023-12-28 07:59:49','2023-12-29 07:59:49',NULL,4),(2,3,2,NULL,'2023-12-29 07:59:49',NULL,NULL,2),(3,5,2,NULL,'2023-12-30 07:59:49',NULL,NULL,2),(4,6,2,NULL,'2023-12-30 09:59:49',NULL,NULL,1);
+/*!40000 ALTER TABLE `incoming_header` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `incoming_line`
+--
+
+DROP TABLE IF EXISTS `incoming_line`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `incoming_line` (
+  `il_id` int(11) NOT NULL AUTO_INCREMENT,
+  `il_ih_id` int(11) NOT NULL,
+  `il_bike_id` int(11) NOT NULL,
+  `il_work_id` int(11) NOT NULL,
+  `il_product_id` int(11) NOT NULL,
+  `il_employee_id` int(11) DEFAULT NULL,
+  `il_time_start` datetime DEFAULT NULL,
+  `il_time_end` datetime DEFAULT NULL,
+  `il_note_id` int(11) DEFAULT NULL,
+  `il_status_id` int(11) NOT NULL,
+  PRIMARY KEY (`il_id`),
+  KEY `incoming_line_FK` (`il_ih_id`),
+  KEY `incoming_line_FK_1` (`il_employee_id`),
+  KEY `incoming_line_FK_2` (`il_product_id`),
+  KEY `incoming_line_FK_3` (`il_bike_id`),
+  KEY `incoming_line_FK_4` (`il_work_id`),
+  KEY `incoming_line_FK_5` (`il_note_id`),
+  KEY `incoming_line_FK_6` (`il_status_id`),
+  CONSTRAINT `incoming_line_FK` FOREIGN KEY (`il_ih_id`) REFERENCES `incoming_header` (`ih_id`),
+  CONSTRAINT `incoming_line_FK_1` FOREIGN KEY (`il_employee_id`) REFERENCES `employees` (`e_id`),
+  CONSTRAINT `incoming_line_FK_2` FOREIGN KEY (`il_product_id`) REFERENCES `product` (`p_id`),
+  CONSTRAINT `incoming_line_FK_3` FOREIGN KEY (`il_bike_id`) REFERENCES `customers_bikes` (`cb_id`),
+  CONSTRAINT `incoming_line_FK_4` FOREIGN KEY (`il_work_id`) REFERENCES `work_tasks` (`wt_id`),
+  CONSTRAINT `incoming_line_FK_5` FOREIGN KEY (`il_note_id`) REFERENCES `notes` (`n_id`),
+  CONSTRAINT `incoming_line_FK_6` FOREIGN KEY (`il_status_id`) REFERENCES `status` (`st_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `incoming_line`
+--
+
+LOCK TABLES `incoming_line` WRITE;
+/*!40000 ALTER TABLE `incoming_line` DISABLE KEYS */;
+INSERT INTO `incoming_line` VALUES (1,1,1,1,91,NULL,NULL,NULL,NULL,2),(2,1,2,1,91,NULL,NULL,NULL,NULL,1),(3,2,3,1,91,NULL,NULL,NULL,NULL,1),(4,2,3,1,91,NULL,NULL,NULL,NULL,2),(5,2,3,1,91,NULL,NULL,NULL,NULL,3),(6,2,3,1,91,NULL,NULL,NULL,NULL,3),(7,2,3,1,91,NULL,NULL,NULL,NULL,1);
+/*!40000 ALTER TABLE `incoming_line` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `inventory`
 --
 
@@ -265,7 +433,7 @@ CREATE TABLE `master_product` (
   KEY `master_product_FK_1` (`mp_bt_id`),
   CONSTRAINT `master_product_FK` FOREIGN KEY (`mp_brand_id`) REFERENCES `brands` (`b_id`),
   CONSTRAINT `master_product_FK_1` FOREIGN KEY (`mp_bt_id`) REFERENCES `brands_types` (`bt_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=60 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=61 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -274,8 +442,32 @@ CREATE TABLE `master_product` (
 
 LOCK TABLES `master_product` WRITE;
 /*!40000 ALTER TABLE `master_product` DISABLE KEYS */;
-INSERT INTO `master_product` VALUES (1,'A201588','Wheel camera',11,1,32.14,'https://i.ibb.co/37QHBqV/1-wheel-continental.jpg'),(2,'A201589','Wheel camera top',11,1,50.72,'https://i.ibb.co/tHZpk4d/2-wheel-continental.jpg'),(3,'B132547','Wheel cover',11,1,47.23,'https://i.ibb.co/zGh6tPT/3-wheel-maxxis.jpg'),(4,'B132548','Wheel cover anti-puncture',12,1,41.65,'https://i.ibb.co/ZMwsQSJ/4-wheel-maxxis-Rekon-29.jpg'),(5,'B132549','Wheel cover tubeless',12,1,54.7,'https://i.ibb.co/1djxN18/5-wheel-tubeless-maxxis.jpg'),(6,'S346522','Brake pads',1,1,17.52,'https://i.ibb.co/ryqvj5C/6-brake-pads-shimano.jpg'),(7,'S124366','Brake pads',2,1,23.22,'https://i.ibb.co/Y2jqnLX/7-brake-pads-SRAM.jpg'),(8,'M212026','Helmet',5,1,25.78,'https://i.ibb.co/wg01FWx/8-helmet.jpg'),(11,'L214718','Lock',22,1,8.75,'https://i.ibb.co/m53KzxB/11-lock-btwin.jpg'),(12,'L214788','Light',8,1,8,'https://i.ibb.co/F5P8Y2r/12-light-hope.jpg'),(13,'W214758','Water bottle',22,1,5,'https://i.ibb.co/mBWW25b/13-bottle-btwin.jpg'),(14,'W224715','Water bottle',4,1,9,'https://i.ibb.co/f1JPsh8/14-bottle-shimano.jpg'),(15,'Q234353','Glasses',7,1,34.99,'https://i.ibb.co/DYYbswt/15-glasses-fox.jpg'),(16,'P213345','Fork',7,1,1500,'https://i.ibb.co/7RNhk4W/16-fork-fox.jpg'),(17,'P213352','Fork',7,1,1199.99,'https://i.ibb.co/M8cvxJN/17-fork-fox.jpg'),(18,'P342312','Fork',6,1,969,'https://i.ibb.co/LPPYDFR/18-fork-rockshox.jpg'),(19,'B847513','Brakes',1,1,192.18,'https://i.ibb.co/FzzPkcD/19-brakes-shimano.jpg'),(20,'B587412','Brakes',2,1,284.7,'https://i.ibb.co/xjX8BVT/20-brakes-sram.jpg'),(21,'G589471','Brake disc',2,1,46.22,'https://i.ibb.co/F7P0Dwk/21-brakes-disc-sram.jpg'),(22,'F239471','Brake disc',1,1,8.94,'https://i.ibb.co/7jq50wk/22-brakes-disc-shimano.jpg'),(23,'P748471','Cycling clothes',13,1,89.99,'https://i.ibb.co/qMv0L07/23-cycling-clothes.jpg'),(24,'P774859','Pedals',1,1,68.99,'https://i.ibb.co/37dnsdJ/24-pedals-shimano.jpg'),(25,'Y728349','Bike BH',20,2,1062,'https://i.ibb.co/zQfDNj4/25-BH-expert-4-5.jpg'),(26,'Y728348','Bike BH',20,2,2.869,'https://i.ibb.co/xYqP0TQ/26-BH-Ultimate-Evo-8-5.jpg'),(28,'D584715','Bike Pinarello',19,2,5450,'https://i.ibb.co/nPTnYJg/28-Pinarello-Prince-Disk.jpg'),(30,'D547016','Bike Giant',14,2,825,'https://i.ibb.co/zSbQGLP/30-giant-talon.jpg'),(31,'P877015','Bike Giant',14,2,825,'https://i.ibb.co/bzKmRdV/31-giant-MY21-Talon-Eplus-3-29.jpg'),(32,'Z728349','Bike BH3',20,2,1700,'https://i.ibb.co/zQfDNj4/25-BH-expert-4-5.jpg'),(58,'W3321','bike fox',7,2,2004,'https://i.ibb.co/jL9mm8T/default-Product-Image.jpg');
+INSERT INTO `master_product` VALUES (1,'A201588','Wheel camera',11,1,32.14,'https://i.ibb.co/37QHBqV/1-wheel-continental.jpg'),(2,'A201589','Wheel camera top',11,1,50.72,'https://i.ibb.co/tHZpk4d/2-wheel-continental.jpg'),(3,'B132547','Wheel cover',11,1,47.23,'https://i.ibb.co/zGh6tPT/3-wheel-maxxis.jpg'),(4,'B132548','Wheel cover anti-puncture',12,1,41.65,'https://i.ibb.co/ZMwsQSJ/4-wheel-maxxis-Rekon-29.jpg'),(5,'B132549','Wheel cover tubeless',12,1,54.7,'https://i.ibb.co/1djxN18/5-wheel-tubeless-maxxis.jpg'),(6,'S346522','Brake pads',1,1,17.52,'https://i.ibb.co/ryqvj5C/6-brake-pads-shimano.jpg'),(7,'S124366','Brake pads',2,1,23.22,'https://i.ibb.co/Y2jqnLX/7-brake-pads-SRAM.jpg'),(8,'M212026','Helmet',5,1,25.78,'https://i.ibb.co/wg01FWx/8-helmet.jpg'),(11,'L214718','Lock',22,1,8.75,'https://i.ibb.co/m53KzxB/11-lock-btwin.jpg'),(12,'L214788','Light',8,1,8,'https://i.ibb.co/F5P8Y2r/12-light-hope.jpg'),(13,'W214758','Water bottle',22,1,5,'https://i.ibb.co/mBWW25b/13-bottle-btwin.jpg'),(14,'W224715','Water bottle',4,1,9,'https://i.ibb.co/f1JPsh8/14-bottle-shimano.jpg'),(15,'Q234353','Glasses',7,1,34.99,'https://i.ibb.co/DYYbswt/15-glasses-fox.jpg'),(16,'P213345','Fork',7,1,1500,'https://i.ibb.co/7RNhk4W/16-fork-fox.jpg'),(17,'P213352','Fork',7,1,1199.99,'https://i.ibb.co/M8cvxJN/17-fork-fox.jpg'),(18,'P342312','Fork',6,1,969,'https://i.ibb.co/LPPYDFR/18-fork-rockshox.jpg'),(19,'B847513','Brakes',1,1,192.18,'https://i.ibb.co/FzzPkcD/19-brakes-shimano.jpg'),(20,'B587412','Brakes',2,1,284.7,'https://i.ibb.co/xjX8BVT/20-brakes-sram.jpg'),(21,'G589471','Brake disc',2,1,46.22,'https://i.ibb.co/F7P0Dwk/21-brakes-disc-sram.jpg'),(22,'F239471','Brake disc',1,1,8.94,'https://i.ibb.co/7jq50wk/22-brakes-disc-shimano.jpg'),(23,'P748471','Cycling clothes',13,1,89.99,'https://i.ibb.co/qMv0L07/23-cycling-clothes.jpg'),(24,'P774859','Pedals',1,1,68.99,'https://i.ibb.co/37dnsdJ/24-pedals-shimano.jpg'),(25,'Y728349','Bike BH',20,2,1062,'https://i.ibb.co/zQfDNj4/25-BH-expert-4-5.jpg'),(26,'Y728348','Bike BH',20,2,2.869,'https://i.ibb.co/xYqP0TQ/26-BH-Ultimate-Evo-8-5.jpg'),(28,'D584715','Bike Pinarello',19,2,5450,'https://i.ibb.co/nPTnYJg/28-Pinarello-Prince-Disk.jpg'),(30,'D547016','Bike Giant',14,2,825,'https://i.ibb.co/zSbQGLP/30-giant-talon.jpg'),(31,'P877015','Bike Giant',14,2,825,'https://i.ibb.co/bzKmRdV/31-giant-MY21-Talon-Eplus-3-29.jpg'),(32,'Z728349','Bike BH3',20,2,1700,'https://i.ibb.co/zQfDNj4/25-BH-expert-4-5.jpg'),(58,'W3321','bike fox',7,2,2004,'https://i.ibb.co/jL9mm8T/default-Product-Image.jpg'),(60,'E346522','Chain',1,1,9.45,'https://i.ibb.co/jL9mm8T/default-Product-Image.jpg');
 /*!40000 ALTER TABLE `master_product` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `notes`
+--
+
+DROP TABLE IF EXISTS `notes`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `notes` (
+  `n_id` int(11) NOT NULL AUTO_INCREMENT,
+  `n_description` varchar(100) NOT NULL,
+  PRIMARY KEY (`n_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `notes`
+--
+
+LOCK TABLES `notes` WRITE;
+/*!40000 ALTER TABLE `notes` DISABLE KEYS */;
+INSERT INTO `notes` VALUES (1,' ');
+/*!40000 ALTER TABLE `notes` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -293,7 +485,7 @@ CREATE TABLE `product` (
   PRIMARY KEY (`p_id`),
   UNIQUE KEY `product_un` (`p_mp_id`,`p_description`,`p_size`),
   CONSTRAINT `product_FK` FOREIGN KEY (`p_mp_id`) REFERENCES `master_product` (`mp_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=91 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=92 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -302,7 +494,7 @@ CREATE TABLE `product` (
 
 LOCK TABLES `product` WRITE;
 /*!40000 ALTER TABLE `product` DISABLE KEYS */;
-INSERT INTO `product` VALUES (1,1,'Wheel camera','NO SIZE'),(2,2,'Wheel camera top','NO SIZE'),(3,3,'Wheel cover','NO SIZE'),(4,4,'Wheel cover Rekon 29','NO SIZE'),(5,5,'Wheel cover tubeless','NO SIZE'),(6,6,'Brake pads','NO SIZE'),(7,7,'Brake pads','NO SIZE'),(8,8,'Helmet','XS'),(9,8,'Helmet','S'),(10,8,'Helmet','M'),(11,8,'Helmet','L'),(12,8,'Helmet','XL'),(13,11,'Lock','NO SIZE'),(14,12,'Light','NO SIZE'),(15,13,'Water bottle','NO SIZE'),(87,14,'Prueba de stock updated','NO SIZE'),(16,14,'Water bottle','NO SIZE'),(17,15,'Glasses Main stray white color','NO SIZE'),(18,16,'Fork 36 Float E-Bike 27.5\" 140 Grip 2 Hi/Low Comp/Reb gloss black 15QRx110 BOOST tapered 44mm 2023','NO SIZE'),(19,17,'Fork 36 Float E-Optimized 29\" 160 Grip 3Pos matt black 15QRx110 BOOST tapered 44mm 2023','NO SIZE'),(20,18,'Fork Fork Zeb Ultimate Charger 2.1 RC2 29\'\' Boost 15x110 offset 44mm 190mm black','NO SIZE'),(21,19,'Brakes XC Race - Deore XT BL-M8100 + BR-M8100 I-Spec EV - J-Kit - Front and Rear set','NO SIZE'),(22,20,'Brakes - Level Stealth - Ultimate ','NO SIZE'),(23,21,'Brake disc - G2 CleanSweep','NO SIZE'),(24,22,'Brake disc - SM-RT30 Centerlock','NO SIZE'),(25,23,'Cycling clothes','S'),(28,23,'Cycling clothes','M'),(29,23,'Cycling clothes','L'),(30,23,'Cycling clothes','XL'),(31,24,'Pedals PD-M520 Automatic ','NO SIZE'),(33,25,'BH Expert 4.5','M'),(34,25,'BH Expert 4.5','L'),(35,25,'BH Expert 4.5','XL'),(43,25,'BH Expert 4.5.2','S'),(36,26,'BH Ultimate Evo 8.5','S'),(37,26,'BH Ultimate Evo 8.5','M'),(89,28,'Pinarello Prince Disk - L','L'),(38,28,'Pinarello Prince Disk - XL','XL'),(39,30,'Giant Talon 0','M'),(40,30,'Giant Talon 0','L'),(41,31,'Giant - MY21 - Talon-Eplus-3-29','M'),(42,31,'Giant - MY21 - Talon-Eplus-3-29','L'),(45,32,'BH Expert 5.5.2','S'),(47,32,'BH Expert 5.5.2','M'),(51,32,'BH Expert La mejor 2','XS'),(49,32,'BH Expert La mejor 2','S');
+INSERT INTO `product` VALUES (1,1,'Wheel camera','NO SIZE'),(2,2,'Wheel camera top','NO SIZE'),(3,3,'Wheel cover','NO SIZE'),(4,4,'Wheel cover Rekon 29','NO SIZE'),(5,5,'Wheel cover tubeless','NO SIZE'),(6,6,'Brake pads','NO SIZE'),(7,7,'Brake pads','NO SIZE'),(11,8,'Helmet - L','L'),(10,8,'Helmet - M','M'),(9,8,'Helmet - S','S'),(12,8,'Helmet - XL','XL'),(8,8,'Helmet - XS','XS'),(13,11,'Lock','NO SIZE'),(14,12,'Light','NO SIZE'),(15,13,'Water bottle','NO SIZE'),(87,14,'Prueba de stock updated','NO SIZE'),(16,14,'Water bottle','NO SIZE'),(17,15,'Glasses Main stray white color','NO SIZE'),(18,16,'Fork 36 Float E-Bike 27.5\" 140 Grip 2 Hi/Low Comp/Reb gloss black 15QRx110 BOOST tapered 44mm 2023','NO SIZE'),(19,17,'Fork 36 Float E-Optimized 29\" 160 Grip 3Pos matt black 15QRx110 BOOST tapered 44mm 2023','NO SIZE'),(20,18,'Fork Fork Zeb Ultimate Charger 2.1 RC2 29\'\' Boost 15x110 offset 44mm 190mm black','NO SIZE'),(21,19,'Brakes XC Race - Deore XT BL-M8100 + BR-M8100 I-Spec EV - J-Kit - Front and Rear set','NO SIZE'),(22,20,'Brakes - Level Stealth - Ultimate ','NO SIZE'),(23,21,'Brake disc - G2 CleanSweep','NO SIZE'),(24,22,'Brake disc - SM-RT30 Centerlock','NO SIZE'),(29,23,'Cycling clothes - L','L'),(28,23,'Cycling clothes - M','M'),(25,23,'Cycling clothes - S','S'),(30,23,'Cycling clothes - XL','XL'),(31,24,'Pedals PD-M520 Automatic ','NO SIZE'),(34,25,'BH Expert 4.5 - L','L'),(33,25,'BH Expert 4.5 - M','M'),(35,25,'BH Expert 4.5 - XL','XL'),(43,25,'BH Expert 4.5.2 - S','S'),(37,26,'BH Ultimate Evo 8.5 - M','M'),(36,26,'BH Ultimate Evo 8.5 - S','S'),(89,28,'Pinarello Prince Disk - L','L'),(38,28,'Pinarello Prince Disk - XL','XL'),(40,30,'Giant Talon 0 - L','L'),(39,30,'Giant Talon 0 - M','M'),(42,31,'Giant - MY21 - Talon-Eplus-3-29 - L','L'),(41,31,'Giant - MY21 - Talon-Eplus-3-29 - M','M'),(47,32,'BH Expert 5.5.2 - M','M'),(45,32,'BH Expert 5.5.2 - S','S'),(49,32,'BH Expert La mejor 2 - S','S'),(51,32,'BH Expert La mejor 2 - XS','XS'),(91,60,'Chain shimano xd','NO SIZE');
 /*!40000 ALTER TABLE `product` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -356,6 +548,30 @@ CREATE TABLE `promotions` (
 LOCK TABLES `promotions` WRITE;
 /*!40000 ALTER TABLE `promotions` DISABLE KEYS */;
 /*!40000 ALTER TABLE `promotions` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `status`
+--
+
+DROP TABLE IF EXISTS `status`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `status` (
+  `st_id` int(11) NOT NULL AUTO_INCREMENT,
+  `st_description` varchar(100) DEFAULT NULL,
+  PRIMARY KEY (`st_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `status`
+--
+
+LOCK TABLES `status` WRITE;
+/*!40000 ALTER TABLE `status` DISABLE KEYS */;
+INSERT INTO `status` VALUES (1,'Pending'),(2,'Processing'),(3,'Stopped'),(4,'Finished'),(5,'Cancelled');
+/*!40000 ALTER TABLE `status` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -414,6 +630,32 @@ INSERT INTO `wharehouses` VALUES (1,'WHAREHOUSE_1','Bilbao'),(2,'WHAREHOUSE_2','
 UNLOCK TABLES;
 
 --
+-- Table structure for table `work_tasks`
+--
+
+DROP TABLE IF EXISTS `work_tasks`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `work_tasks` (
+  `wt_id` int(11) NOT NULL AUTO_INCREMENT,
+  `wt_description` varchar(100) NOT NULL,
+  `wt_time` int(11) NOT NULL,
+  `wt_price` float NOT NULL,
+  PRIMARY KEY (`wt_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `work_tasks`
+--
+
+LOCK TABLES `work_tasks` WRITE;
+/*!40000 ALTER TABLE `work_tasks` DISABLE KEYS */;
+INSERT INTO `work_tasks` VALUES (1,'Chain change',60,15);
+/*!40000 ALTER TABLE `work_tasks` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Dumping routines for database 'bike_workshop'
 --
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -426,4 +668,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-12-21 20:15:46
+-- Dump completed on 2024-01-10 20:39:33
